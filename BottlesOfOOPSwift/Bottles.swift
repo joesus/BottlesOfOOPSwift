@@ -19,7 +19,26 @@ class Bottles {
             }.joined(separator: "\n")
     }
 
-    static func container(_ number: Int) -> String {
+    static func verse(_ number: Int) -> String {
+        let bottleNumber = BottleNumber(number)
+        let nextBottle = BottleNumber(bottleNumber.successor())
+
+        return "\(String(bottleNumber.quantity().characters.prefix(1)).capitalized + String(bottleNumber.quantity().characters.dropFirst())) \(bottleNumber.container()) of beer on the wall, " +
+            "\(bottleNumber.quantity()) \(bottleNumber.container()) of beer.\n" +
+            "\(bottleNumber.action()), " +
+            "\(nextBottle.quantity()) \(nextBottle.container()) of beer on the wall.\n"
+    }
+}
+
+class BottleNumber {
+
+    var number: Int
+
+    init(_ number: Int) {
+        self.number = number
+    }
+
+    func container() -> String {
         switch number {
         case 1:
             return "bottle"
@@ -28,38 +47,31 @@ class Bottles {
         }
     }
 
-    static func pronoun(_ number: Int) -> String {
+    func pronoun() -> String {
         if number == 1 {
             return "it"
         }
         return "one"
     }
 
-    static func quantity(_ number: Int = 0) -> String {
+    func quantity() -> String {
         if number == 0 {
             return "no more"
         }
         return "\(number)"
     }
 
-    static func action(_ number: Int) -> String {
+    func action() -> String {
         if number == 0 {
             return "Go to the store and buy some more"
         }
-        return "Take \(pronoun(number)) down and pass it around"
+        return "Take \(pronoun()) down and pass it around"
     }
 
-    static func successor(_ number: Int) -> Int {
+    func successor() -> Int {
         if number == 0 {
             return 99
         }
         return number - 1
-    }
-
-    static func verse(_ number: Int) -> String {
-        return "\(String(quantity(number).characters.prefix(1)).capitalized + String(quantity(number).characters.dropFirst())) \(container(number)) of beer on the wall, " +
-            "\(quantity(number)) \(container(number)) of beer.\n" +
-            "\(action(number)), " +
-            "\(quantity(successor(number))) \(container(successor(number))) of beer on the wall.\n"
     }
 }
