@@ -28,23 +28,38 @@ class Bottles {
         }
     }
 
-    static func verse(_ number: Int) -> String {
-        switch number {
-        case 0:
-            return "No more bottles of beer on the wall, " +
-                "no more bottles of beer.\n" +
-                "Go to the store and buy some more, " +
-                "99 bottles of beer on the wall.\n"
-        case 1:
-            return "1 bottle of beer on the wall, " +
-                "1 bottle of beer.\n" +
-                "Take it down and pass it around, " +
-                "no more bottles of beer on the wall.\n"
-        default:
-            return "\(number) bottles of beer on the wall, " +
-                "\(number) bottles of beer.\n" +
-                "Take one down and pass it around, " +
-                "\(number - 1) \(container(number - 1)) of beer on the wall.\n"
+    static func pronoun(_ number: Int) -> String {
+        if number == 1 {
+            return "it"
         }
+        return "one"
+    }
+
+    static func quantity(_ number: Int = 0) -> String {
+        if number == 0 {
+            return "no more"
+        }
+        return "\(number)"
+    }
+
+    static func action(_ number: Int) -> String {
+        if number == 0 {
+            return "Go to the store and buy some more"
+        }
+        return "Take \(pronoun(number)) down and pass it around"
+    }
+
+    static func successor(_ number: Int) -> Int {
+        if number == 0 {
+            return 99
+        }
+        return number - 1
+    }
+
+    static func verse(_ number: Int) -> String {
+        return "\(String(quantity(number).characters.prefix(1)).capitalized + String(quantity(number).characters.dropFirst())) \(container(number)) of beer on the wall, " +
+            "\(quantity(number)) \(container(number)) of beer.\n" +
+            "\(action(number)), " +
+            "\(quantity(successor(number))) \(container(successor(number))) of beer on the wall.\n"
     }
 }
