@@ -20,58 +20,105 @@ class Bottles {
     }
 
     static func verse(_ number: Int) -> String {
-        let bottleNumber = BottleNumber(number)
-        let nextBottle = BottleNumber(bottleNumber.successor())
+        let bottleNumber = BottleNumber.bottleNumber(for: number)
 
-        return "\(String(bottleNumber.quantity().characters.prefix(1)).capitalized + String(bottleNumber.quantity().characters.dropFirst())) \(bottleNumber.container()) of beer on the wall, " +
-            "\(bottleNumber.quantity()) \(bottleNumber.container()) of beer.\n" +
+        return "\(bottleNumber) of beer on the wall, ".capitalizingFirstLetter() +
+            "\(bottleNumber) of beer.\n" +
             "\(bottleNumber.action()), " +
-            "\(nextBottle.quantity()) \(nextBottle.container()) of beer on the wall.\n"
+            "\(bottleNumber.successor()) of beer on the wall.\n"
     }
 }
 
-class BottleNumber {
+protocol BottleNumerable {
+    var number: Int { get set }
+    func successor() -> BottleNumerable
+    func action() -> String
+}
+
+class BottleNumber: BottleNumerable, CustomStringConvertible {
 
     var number: Int
+
+    var description: String {
+        return "\(quantity()) \(container())"
+    }
 
     init(_ number: Int) {
         self.number = number
     }
 
-    func container() -> String {
+    static func bottleNumber(for number: Int) -> BottleNumerable {
         switch number {
+        case 0:
+            return BottleNumber0(number)
         case 1:
-            return "bottle"
+            return BottleNumber1(number)
+        case 6:
+            return BottleNumber6(number)
         default:
-            return "bottles"
+            return BottleNumber(number)
         }
     }
 
+    func container() -> String {
+        return "bottles"
+    }
+
     func pronoun() -> String {
-        if number == 1 {
-            return "it"
-        }
         return "one"
     }
 
     func quantity() -> String {
-        if number == 0 {
-            return "no more"
-        }
         return "\(number)"
     }
 
     func action() -> String {
-        if number == 0 {
-            return "Go to the store and buy some more"
-        }
         return "Take \(pronoun()) down and pass it around"
     }
 
-    func successor() -> Int {
-        if number == 0 {
-            return 99
-        }
-        return number - 1
+    func successor() -> BottleNumerable {
+        return BottleNumber.bottleNumber(for: number - 1)
+    }
+}
+
+class BottleNumber0: BottleNumber {
+    override func quantity() -> String {
+        return "no more"
+    }
+
+    override func action() -> String {
+        return "Go to the store and buy some more"
+    }
+
+    override func successor() -> BottleNumerable {
+        return BottleNumber.bottleNumber(for: 99)
+    }
+}
+
+class BottleNumber1: BottleNumber {
+    override func container() -> String {
+        return "bottle"
+    }
+
+    override func pronoun() -> String {
+        return "it"
+    }
+}
+
+class BottleNumber6: BottleNumber {
+    override func quantity() -> String {
+        return "1"
+    }
+
+    override func container() -> String {
+        return "six-pack"
+    }
+}
+
+extension String {
+    func capitalizingFirstLetter() -> String {
+        let first = String(characters.prefix(1)).capitalized
+        let other = String(characters.dropFirst())
+        return first + other
     }
 }
